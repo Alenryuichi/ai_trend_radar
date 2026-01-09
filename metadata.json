@@ -1,0 +1,5 @@
+{
+  "name": "AI TrendRadar",
+  "description": "A sophisticated AI-focused information retrieval and analysis platform. It monitors real-time trends in LLMs, robotics, and generative AI using Gemini's search grounding to provide up-to-the-minute insights and deep technical summaries.",
+  "requestFramePermissions": []
+}
