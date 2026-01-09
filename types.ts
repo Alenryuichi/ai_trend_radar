@@ -12,12 +12,6 @@ export interface TokenUsage {
   totalTokens: number;
 }
 
-export interface BenchmarkData {
-  model: string;
-  score: number;
-  metric: string;
-}
-
 export interface IntelligenceCore {
   id: string;
   name: string;
@@ -137,28 +131,25 @@ export const TRANSLATIONS = {
     devLab: "Coding Efficiency Lab",
     trendingRepos: "Trending Dev Repos",
     repoSummary: "AI-driven coding tools for maximum productivity.",
-    sourceFocus: "Focus: Cursor, Windsurf, Trae, DeepSeek-V3",
+    sourceFocus: "Source: every.to, Anthropic, Google, Cursor",
     coreSelect: "Intelligence Core",
     groundingActive: "Search Grounding Active",
-    groundingDisabled: "Grounding Unavailable",
+    groundingDisabled: "Grounding Unavailable (Standard LLM)",
     usageMonitor: "Telemetry Monitor",
     tokens: "Tokens Consumed",
     resetUsage: "Reset Telemetry",
     costEst: "Est. Computation Cost",
-    benchmark: "Coding Benchmarks",
-    metric: "Score (HumanEval)",
-    tools: "Active Dev Stack",
   },
   zh: {
     radar: "技术领域热度",
     clusters: "内容分类",
     digests: "自动化摘要",
-    digestDesc: "引擎实时汇总技术信号，聚焦最新的编程提效工具。",
+    digestDesc: "我们的引擎将数百个技术信号合成为简洁的两句式摘要，助您快速掌握核心内容。",
     summariesGenerated: "摘要已生成",
     globalPulse: "全球 AI 动态",
     favorites: "已收藏见解",
     noFavorites: "您还没有收藏任何见解。",
-    placeholder: "查询编程提效、IDE 插件或最新模型...",
+    placeholder: "查询技术趋势或特定模型...",
     analyze: "深度分析",
     refresh: "刷新动态",
     sync: "最后同步时间",
@@ -171,20 +162,17 @@ export const TRANSLATIONS = {
     endOfStream: "情报流结束",
     reset: "重置全局流",
     signalLost: "信号丢失",
-    noTrends: "未在该分类下检测到显著趋势。",
+    noTrends: "未在该分类下检测到显著趋势，请尝试扩大查询范围。",
     devLab: "编程提效实验室",
     trendingRepos: "热门 GitHub 仓库",
     repoSummary: "专注于 AI 编程提效的开源神器。",
-    sourceFocus: "聚焦: Cursor, Windsurf, Trae, DeepSeek-V3/R1",
+    sourceFocus: "聚焦: every.to, Claude, Gemini, Cursor 专家文章",
     coreSelect: "智能内核",
     groundingActive: "实时搜索增强已开启",
-    groundingDisabled: "无法使用搜索增强",
+    groundingDisabled: "无法使用搜索增强 (标准模型)",
     usageMonitor: "资源消耗监控",
     tokens: "累计 Token 消耗",
     resetUsage: "清空统计",
     costEst: "预估计算成本",
-    benchmark: "代码能力基准测试",
-    metric: "得分 (HumanEval)",
-    tools: "当前最强提效工具栈",
   }
 };
