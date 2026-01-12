@@ -4,8 +4,8 @@
  * 包含主推薦卡片和備選卡片網格
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { DailyPractice, DailyPracticeRecord } from '../../types';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { DailyPractice, DailyPracticeRecord, ScenarioTag } from '../../types';
 import { getTodayPractice } from '../../services/supabaseService';
 import { getCompletedPracticeIds, savePracticeStatus } from '../../services/practiceStorageService';
 import { cacheDailyPractice, getTodayCachedPractice } from '../../services/practicesCacheService';
@@ -14,6 +14,7 @@ import DailyPracticeCard from './DailyPracticeCard';
 import PracticeProgress from './PracticeProgress';
 import PracticeHistory from './PracticeHistory';
 import NetworkBanner from './NetworkBanner';
+import ScenarioFilter from './ScenarioFilter';
 
 // ============================================================
 // Skeleton Loading Component
@@ -55,7 +56,34 @@ const DailyPracticeSection: React.FC = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [isFromCache, setIsFromCache] = useState(false);
 
+  // 篩選器狀態
+  const [selectedScenario, setSelectedScenario] = useState<ScenarioTag | 'all'>('all');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<'beginner' | 'intermediate' | 'advanced' | 'all'>('all');
+
   const { isOnline, isOffline, wasOffline } = useNetworkStatus();
+
+  // 篩選後的精選列表
+  const filteredPractices = useMemo(() => {
+    const allPractices = mainPractice ? [mainPractice, ...altPractices] : altPractices;
+
+    return allPractices.filter((practice) => {
+      // 難度篩選
+      if (selectedDifficulty !== 'all' && practice.difficulty !== selectedDifficulty) {
+        return false;
+      }
+      // 場景篩選
+      if (selectedScenario !== 'all') {
+        const scenarios = practice.scenarioTags || [];
+        if (!scenarios.includes(selectedScenario)) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [mainPractice, altPractices, selectedScenario, selectedDifficulty]);
+
+  // 檢查是否有篩選條件
+  const hasFilters = selectedScenario !== 'all' || selectedDifficulty !== 'all';
 
   const loadTodayPractice = useCallback(async (skipCache = false) => {
     setIsLoading(true);
@@ -210,7 +238,7 @@ const DailyPracticeSection: React.FC = () => {
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-3">
-          <i className="fa-solid fa-laptop-code text-blue-500 text-lg"></i>
+          <i className="fa-solid fa-laptop-code text-emerald-500 text-lg"></i>
           <h2 className="text-xl sm:text-2xl font-bold text-white">今日精選</h2>
           {isFromCache && (
             <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-[10px] rounded-lg">
@@ -223,56 +251,109 @@ const DailyPracticeSection: React.FC = () => {
         </span>
       </div>
 
-      {/* Main Practice Card */}
-      <div className="space-y-4">
-        <DailyPracticeCard
-          practice={mainPractice}
-          variant="main"
-          expanded={expandedId === mainPractice.id}
-          onToggleExpand={() => handleToggleExpand(mainPractice.id)}
-        />
-        {/* 實踐狀態按鈕 */}
-        <div className="flex items-center justify-between">
-          <PracticeProgress
-            practiceId={mainPractice.id}
-            isCompleted={completedIds.has(mainPractice.id)}
-            onToggle={handleToggleComplete}
-          />
-          <button
-            onClick={() => setShowHistory(!showHistory)}
-            className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
-          >
-            <i className={`fa-solid fa-clock-rotate-left mr-1.5`}></i>
-            {showHistory ? '隱藏歷史' : '查看歷史'}
-          </button>
-        </div>
-      </div>
+      {/* 場景篩選器 */}
+      <ScenarioFilter
+        selectedScenario={selectedScenario}
+        selectedDifficulty={selectedDifficulty}
+        onScenarioChange={setSelectedScenario}
+        onDifficultyChange={setSelectedDifficulty}
+      />
 
-      {/* Alternative Practices */}
-      {altPractices.length > 0 && (
+      {/* 篩選結果顯示 */}
+      {hasFilters ? (
         <>
-          <div className="flex items-center gap-3 pt-4">
-            <div className="h-px flex-1 bg-white/10"></div>
-            <span className="text-xs text-gray-500 uppercase tracking-widest font-medium">更多推薦</span>
-            <div className="h-px flex-1 bg-white/10"></div>
+          {/* 篩選結果數量 */}
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-gray-500">
+              找到 <span className="text-emerald-400 font-medium">{filteredPractices.length}</span> 個相關技巧
+            </span>
+            <button
+              onClick={() => {
+                setSelectedScenario('all');
+                setSelectedDifficulty('all');
+              }}
+              className="text-xs text-gray-500 hover:text-emerald-400 transition-colors"
+            >
+              <i className="fa-solid fa-xmark mr-1"></i>
+              清除篩選
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {altPractices.map((practice) => (
-              <DailyPracticeCard
-                key={practice.id}
-                practice={practice}
-                variant="alternative"
-                expanded={expandedId === practice.id}
-                onToggleExpand={() => handleToggleExpand(practice.id)}
+          {/* 篩選後的精選列表 */}
+          {filteredPractices.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredPractices.map((practice, index) => (
+                <DailyPracticeCard
+                  key={practice.id}
+                  practice={practice}
+                  variant={index === 0 ? 'main' : 'alternative'}
+                  expanded={expandedId === practice.id}
+                  onToggleExpand={() => handleToggleExpand(practice.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-2xl bg-white/5 border border-white/10 p-8 text-center">
+              <i className="fa-solid fa-filter-circle-xmark text-gray-600 text-3xl mb-3"></i>
+              <p className="text-gray-500">暫無符合條件的技巧</p>
+              <p className="text-gray-600 text-xs mt-2">嘗試調整篩選條件</p>
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          {/* Main Practice Card */}
+          <div className="space-y-4">
+            <DailyPracticeCard
+              practice={mainPractice}
+              variant="main"
+              expanded={expandedId === mainPractice.id}
+              onToggleExpand={() => handleToggleExpand(mainPractice.id)}
+            />
+            {/* 實踐狀態按鈕 */}
+            <div className="flex items-center justify-between">
+              <PracticeProgress
+                practiceId={mainPractice.id}
+                isCompleted={completedIds.has(mainPractice.id)}
+                onToggle={handleToggleComplete}
               />
-            ))}
+              <button
+                onClick={() => setShowHistory(!showHistory)}
+                className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+              >
+                <i className={`fa-solid fa-clock-rotate-left mr-1.5`}></i>
+                {showHistory ? '隱藏歷史' : '查看歷史'}
+              </button>
+            </div>
           </div>
+
+          {/* Alternative Practices */}
+          {altPractices.length > 0 && (
+            <>
+              <div className="flex items-center gap-3 pt-4">
+                <div className="h-px flex-1 bg-white/10"></div>
+                <span className="text-xs text-gray-500 uppercase tracking-widest font-medium">更多推薦</span>
+                <div className="h-px flex-1 bg-white/10"></div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {altPractices.map((practice) => (
+                  <DailyPracticeCard
+                    key={practice.id}
+                    practice={practice}
+                    variant="alternative"
+                    expanded={expandedId === practice.id}
+                    onToggleExpand={() => handleToggleExpand(practice.id)}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </>
       )}
 
       {/* 歷史精選區塊 */}
-      {showHistory && (
+      {showHistory && !hasFilters && (
         <div className="pt-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="h-px flex-1 bg-white/10"></div>

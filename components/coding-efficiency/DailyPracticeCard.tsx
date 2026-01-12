@@ -5,7 +5,19 @@
  */
 
 import React from 'react';
-import { DailyPractice } from '../../types';
+import { DailyPractice, ScenarioTag } from '../../types';
+
+// 場景標籤配置
+const SCENARIO_CONFIG: Record<ScenarioTag, { label: string; icon: string; color: string }> = {
+  'debugging': { label: '調試', icon: 'fa-bug', color: 'text-red-400 bg-red-500/10' },
+  'refactoring': { label: '重構', icon: 'fa-code-branch', color: 'text-purple-400 bg-purple-500/10' },
+  'code-review': { label: '代碼審查', icon: 'fa-magnifying-glass-chart', color: 'text-blue-400 bg-blue-500/10' },
+  'testing': { label: '測試', icon: 'fa-vial', color: 'text-cyan-400 bg-cyan-500/10' },
+  'documentation': { label: '文檔', icon: 'fa-file-lines', color: 'text-orange-400 bg-orange-500/10' },
+  'learning': { label: '學習', icon: 'fa-graduation-cap', color: 'text-indigo-400 bg-indigo-500/10' },
+  'productivity': { label: '生產力', icon: 'fa-rocket', color: 'text-emerald-400 bg-emerald-500/10' },
+  'prompt-engineering': { label: '提示工程', icon: 'fa-wand-magic-sparkles', color: 'text-pink-400 bg-pink-500/10' },
+};
 
 // ============================================================
 // Types
@@ -91,6 +103,25 @@ const DailyPracticeCard: React.FC<DailyPracticeCardProps> = ({
       <p className="text-gray-400 text-sm leading-relaxed mb-4">
         {practice.summary}
       </p>
+
+      {/* 場景標籤 */}
+      {practice.scenarioTags && practice.scenarioTags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {practice.scenarioTags.map((scenario) => {
+            const config = SCENARIO_CONFIG[scenario];
+            if (!config) return null;
+            return (
+              <span
+                key={scenario}
+                className={`px-2 py-1 rounded-md text-[10px] font-medium flex items-center gap-1.5 ${config.color}`}
+              >
+                <i className={`fa-solid ${config.icon} text-[8px]`}></i>
+                {config.label}
+              </span>
+            );
+          })}
+        </div>
+      )}
 
       {/* 標籤 */}
       <div className="flex flex-wrap gap-2 mb-4">

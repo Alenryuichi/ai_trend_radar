@@ -8,6 +8,19 @@ export type Language = 'en' | 'zh';
 /**
  * 今日精選內容 - 前端使用的業務模型
  */
+/**
+ * 場景標籤類型
+ */
+export type ScenarioTag =
+  | 'debugging'      // 調試
+  | 'refactoring'    // 重構
+  | 'code-review'    // 代碼審查
+  | 'testing'        // 測試
+  | 'documentation'  // 文檔
+  | 'learning'       // 學習
+  | 'productivity'   // 生產力
+  | 'prompt-engineering'; // 提示工程
+
 export interface DailyPractice {
   id: string;
   title: string;
@@ -20,6 +33,8 @@ export interface DailyPractice {
   sourceName: string;
   tools: string[];
   tags: string[];
+  /** 場景標籤 - 用於場景化篩選 */
+  scenarioTags?: ScenarioTag[];
 }
 
 /**

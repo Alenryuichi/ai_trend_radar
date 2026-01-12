@@ -14,6 +14,16 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 // Types
 // ============================================================
 
+type ScenarioTag =
+  | 'debugging'      // 調試
+  | 'refactoring'    // 重構
+  | 'code-review'    // 代碼審查
+  | 'testing'        // 測試
+  | 'documentation'  // 文檔
+  | 'learning'       // 學習
+  | 'productivity'   // 生產力
+  | 'prompt-engineering'; // 提示工程
+
 interface DailyPractice {
   id: string;
   title: string;
@@ -26,6 +36,7 @@ interface DailyPractice {
   sourceName: string;
   tools: string[];
   tags: string[];
+  scenarioTags: ScenarioTag[];
 }
 
 interface GenerationResult {
@@ -148,6 +159,15 @@ const GENERATION_PROMPT = `你是一位 AI 輔助編程專家。請生成今日�
    - sourceName: 來源名稱（可以是空字串）
    - tools: 相關工具（數組）
    - tags: 標籤（數組）
+   - scenarioTags: 場景標籤（數組，從以下選項中選擇 1-3 個最相關的）:
+     * "debugging" - 調試場景
+     * "refactoring" - 重構場景
+     * "code-review" - 代碼審查場景
+     * "testing" - 測試場景
+     * "documentation" - 文檔場景
+     * "learning" - 學習場景
+     * "productivity" - 生產力場景
+     * "prompt-engineering" - 提示工程場景
 
 3. 內容應聚焦於：
    - AI 輔助編程工具使用技巧
@@ -155,6 +175,8 @@ const GENERATION_PROMPT = `你是一位 AI 輔助編程專家。請生成今日�
    - AI Code Review 方法
    - AI 輔助調試技巧
    - 生產力提升方法
+
+4. 每日推薦應盡量覆蓋不同場景和難度，讓不同階段的開發者都能受益。
 
 請以 JSON 格式輸出（不要包含 markdown 代碼塊標記）：
 {
