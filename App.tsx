@@ -7,6 +7,7 @@ import TrendCard from './components/TrendCard';
 import GitHubRepoCard from './components/GitHubRepoCard';
 import DailyPracticeSection from './components/coding-efficiency/DailyPracticeSection';
 import PracticeHistory from './components/coding-efficiency/PracticeHistory';
+import ProgressDashboard from './components/coding-efficiency/ProgressDashboard';
 import { getCompletedPracticeIds } from './services/practiceStorageService';
 
 const App: React.FC = () => {
@@ -28,7 +29,7 @@ const App: React.FC = () => {
   const [isDetailLoading, setIsDetailLoading] = useState(false);
 
   // 側邊欄視圖
-  const [sidebarView, setSidebarView] = useState<'stats' | 'history'>('stats');
+  const [sidebarView, setSidebarView] = useState<'stats' | 'history' | 'dashboard'>('stats');
 
   // Token Usage State
   const [totalUsage, setTotalUsage] = useState<TokenUsage>({ promptTokens: 0, completionTokens: 0, totalTokens: 0 });
@@ -341,6 +342,17 @@ const App: React.FC = () => {
               <i className="fa-solid fa-clock-rotate-left"></i>
               {language === 'zh' ? '歷史精選' : 'History'}
             </button>
+            <button
+              onClick={() => setSidebarView('dashboard')}
+              className={`w-full text-left px-4 py-3 rounded-xl text-[11px] font-bold transition-all flex items-center gap-3 ${
+                sidebarView === 'dashboard'
+                ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400'
+                : 'bg-white/5 border border-transparent text-gray-400 hover:bg-white/10'
+              }`}
+            >
+              <i className="fa-solid fa-chart-pie"></i>
+              {language === 'zh' ? '我的進度' : 'My Progress'}
+            </button>
           </nav>
         </aside>
 
@@ -466,13 +478,11 @@ const App: React.FC = () => {
               )}
             </div>
           ) : (
-            /* Default View: Daily Practice or History */
+            /* Default View: Daily Practice, History, or Dashboard */
             <>
-              {sidebarView === 'stats' ? (
-                <DailyPracticeSection />
-              ) : (
-                <PracticeHistory />
-              )}
+              {sidebarView === 'stats' && <DailyPracticeSection />}
+              {sidebarView === 'history' && <PracticeHistory />}
+              {sidebarView === 'dashboard' && <ProgressDashboard />}
             </>
           )}
         </div>
