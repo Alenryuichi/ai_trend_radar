@@ -103,12 +103,12 @@ const ActivityChart: React.FC<ActivityChartProps> = ({ data }) => {
     <div className="bg-white/5 rounded-xl p-4 border border-white/10">
       <h3 className="text-sm font-medium text-gray-300 mb-4">
         <i className="fa-solid fa-chart-simple text-emerald-400 mr-2"></i>
-        最近 7 天活動
+        最近 7 天活动
       </h3>
       <div className="flex items-end justify-between gap-2 h-24">
         {data.map((item, index) => {
           const height = (item.count / maxCount) * 100;
-          const dayName = new Date(item.date).toLocaleDateString('zh-TW', { weekday: 'short' });
+          const dayName = new Date(item.date).toLocaleDateString('zh-CN', { weekday: 'short' });
           return (
             <div key={index} className="flex-1 flex flex-col items-center gap-1">
               <div 
@@ -158,28 +158,28 @@ const ProgressDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex items-center gap-3">
         <i className="fa-solid fa-chart-pie text-emerald-500 text-lg"></i>
-        <h2 className="text-xl font-bold text-white">我的進度</h2>
+        <h2 className="text-xl font-bold text-white">我的进度</h2>
       </div>
 
       {/* Weekly Progress Ring + Stats */}
       <div className="flex flex-col sm:flex-row items-center gap-6">
         <div className="flex-shrink-0">
-          <ProgressRing progress={weeklyProgress} label="本週目標" />
+          <ProgressRing progress={weeklyProgress} label="本周目标" />
         </div>
         <div className="flex-1 grid grid-cols-2 gap-3 w-full">
           <StatCard
             icon="fa-fire"
             iconColor="bg-orange-500"
-            label="連續打卡"
+            label="连续打卡"
             value={`${stats.streak} 天`}
-            subLabel={stats.longestStreak > stats.streak ? `最長 ${stats.longestStreak} 天` : undefined}
+            subLabel={stats.longestStreak > stats.streak ? `最长 ${stats.longestStreak} 天` : undefined}
           />
           <StatCard
             icon="fa-check-double"
             iconColor="bg-emerald-500"
-            label="總完成數"
+            label="总完成数"
             value={stats.total}
-            subLabel={`本週 ${stats.thisWeek} 個`}
+            subLabel={`本周 ${stats.thisWeek} 个`}
           />
         </div>
       </div>
@@ -192,7 +192,7 @@ const ProgressDashboard: React.FC = () => {
         <StatCard
           icon="fa-calendar-week"
           iconColor="bg-blue-500"
-          label="本週"
+          label="本周"
           value={stats.thisWeek}
         />
         <StatCard
@@ -204,7 +204,7 @@ const ProgressDashboard: React.FC = () => {
         <StatCard
           icon="fa-trophy"
           iconColor="bg-yellow-500"
-          label="最長連續"
+          label="最长连续"
           value={`${stats.longestStreak} 天`}
         />
       </div>
@@ -224,7 +224,7 @@ const ProgressDashboard: React.FC = () => {
                   {item.id.replace('practice-', '').replace(/-/g, ' ').slice(0, 30)}
                 </span>
                 <span className="text-xs text-gray-500 ml-2">
-                  {new Date(item.completedAt).toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' })}
+                  {new Date(item.completedAt).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
                 </span>
               </div>
             ))}
@@ -236,8 +236,8 @@ const ProgressDashboard: React.FC = () => {
       {stats.total === 0 && (
         <div className="text-center py-8">
           <i className="fa-solid fa-seedling text-gray-600 text-4xl mb-3"></i>
-          <p className="text-gray-500">還沒有完成任何技巧</p>
-          <p className="text-gray-600 text-xs mt-1">開始實踐今日精選吧！</p>
+          <p className="text-gray-500">还没有完成任何技巧</p>
+          <p className="text-gray-600 text-xs mt-1">开始实践今日精选吧！</p>
         </div>
       )}
     </div>

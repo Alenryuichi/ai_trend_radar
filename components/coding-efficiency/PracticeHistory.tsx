@@ -1,7 +1,7 @@
 /**
- * PracticeHistory - 歷史精選瀏覽
- * 
- * 顯示最近 7 天的歷史精選，支持展開詳情和標記實踐
+ * PracticeHistory - 历史精选浏览
+ *
+ * 显示最近 7 天的历史精选，支持展开详情和标记实践
  */
 
 import React, { useState, useEffect } from 'react';
@@ -20,11 +20,11 @@ const formatRelativeDate = (dateStr: string): string => {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  
+
   if (diffDays === 0) return '今天';
   if (diffDays === 1) return '昨天';
   if (diffDays < 7) return `${diffDays} 天前`;
-  return date.toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' });
+  return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
 };
 
 // ============================================================
@@ -42,9 +42,9 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ record, isCompleted, onToggle
   const practice = record.main_practice;
   
   const difficultyConfig = {
-    beginner: { label: '入門', className: 'bg-green-500/20 text-green-400' },
-    intermediate: { label: '中級', className: 'bg-yellow-500/20 text-yellow-400' },
-    advanced: { label: '高級', className: 'bg-red-500/20 text-red-400' }
+    beginner: { label: '入门', className: 'bg-green-500/20 text-green-400' },
+    intermediate: { label: '中级', className: 'bg-yellow-500/20 text-yellow-400' },
+    advanced: { label: '高级', className: 'bg-red-500/20 text-red-400' }
   };
   const { label: diffLabel, className: diffClass } = difficultyConfig[practice.difficulty];
 
@@ -84,18 +84,18 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ record, isCompleted, onToggle
         <div className="px-4 pb-4 pt-2 border-t border-white/5 space-y-4">
           <p className="text-sm text-gray-400">{practice.summary}</p>
           
-          {/* 為何重要 */}
+          {/* 为何重要 */}
           <div>
             <h5 className="text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
-              <i className="fa-solid fa-lightbulb text-yellow-500 mr-1.5"></i>為何重要
+              <i className="fa-solid fa-lightbulb text-yellow-500 mr-1.5"></i>为何重要
             </h5>
             <p className="text-sm text-gray-500">{practice.whyItMatters}</p>
           </div>
-          
-          {/* 步驟（簡化顯示） */}
+
+          {/* 步骤（简化显示） */}
           <div>
             <h5 className="text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
-              <i className="fa-solid fa-list-check text-green-500 mr-1.5"></i>實踐步驟
+              <i className="fa-solid fa-list-check text-green-500 mr-1.5"></i>实践步骤
             </h5>
             <ol className="space-y-1">
               {practice.steps.slice(0, 3).map((step, i) => (
@@ -105,12 +105,12 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ record, isCompleted, onToggle
                 </li>
               ))}
               {practice.steps.length > 3 && (
-                <li className="text-xs text-gray-600">...還有 {practice.steps.length - 3} 個步驟</li>
+                <li className="text-xs text-gray-600">...还有 {practice.steps.length - 3} 个步骤</li>
               )}
             </ol>
           </div>
-          
-          {/* 標記按鈕 */}
+
+          {/* 标记按钮 */}
           <div className="pt-2">
             <PracticeProgress
               practiceId={practice.id}
@@ -143,7 +143,7 @@ const PracticeHistory: React.FC = () => {
     setCompletedIds(getCompletedPracticeIds());
     
     const result = await getPracticeHistory(7);
-    // 過濾掉今天的記錄（今天在主區塊顯示）
+    // 过滤掉今天的记录（今天在主区块显示）
     const today = new Date().toISOString().split('T')[0];
     const pastRecords = (result.data || []).filter(r => r.date !== today);
     setHistory(pastRecords);
@@ -169,7 +169,7 @@ const PracticeHistory: React.FC = () => {
     return (
       <div className="text-center py-8 text-gray-500">
         <i className="fa-solid fa-clock-rotate-left text-2xl mb-2 opacity-30"></i>
-        <p className="text-sm">暫無歷史精選</p>
+        <p className="text-sm">暂无历史精选</p>
       </div>
     );
   }

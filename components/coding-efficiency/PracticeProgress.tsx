@@ -1,7 +1,7 @@
 /**
- * PracticeProgress - 實踐狀態標記按鈕
- * 
- * 允許用戶標記今日精選為「已實踐」並持久化到 LocalStorage
+ * PracticeProgress - 实践状态标记按钮
+ *
+ * 允许用户标记今日精选为「已实践」并持久化到 LocalStorage
  */
 
 import React, { useState, useEffect } from 'react';
@@ -34,23 +34,23 @@ const PracticeProgress: React.FC<PracticeProgressProps> = ({
     setIsAnimating(true);
     const newStatus = !isCompleted;
     onToggle(practiceId, newStatus);
-    
-    // 顯示成功反饋
+
+    // 显示成功反馈
     if (newStatus) {
       setShowFeedback(true);
       setTimeout(() => setShowFeedback(false), 2000);
     }
-    
-    // 動畫結束
+
+    // 动画结束
     setTimeout(() => setIsAnimating(false), 300);
   };
 
   // 尺寸配置
-  const sizeStyles = size === 'sm' 
+  const sizeStyles = size === 'sm'
     ? 'px-3 py-1.5 text-xs gap-1.5'
     : 'px-4 py-2 text-sm gap-2';
 
-  // 狀態樣式
+  // 状态样式
   const buttonStyles = isCompleted
     ? 'bg-green-500/20 text-green-400 border-green-500/30 hover:bg-green-500/30'
     : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white';
@@ -74,17 +74,17 @@ const PracticeProgress: React.FC<PracticeProgressProps> = ({
         ) : (
           <>
             <i className="fa-regular fa-circle"></i>
-            <span>標記為已實踐</span>
+            <span>标记为已实践</span>
           </>
         )}
       </button>
 
-      {/* 成功反饋提示 */}
+      {/* 成功反馈提示 */}
       {showFeedback && (
-        <span 
+        <span
           className="absolute -right-2 -top-2 px-2 py-0.5 bg-green-500 text-white text-[10px] font-bold rounded-full animate-bounce"
         >
-          ✓ 已記錄
+          ✓ 已记录
         </span>
       )}
     </div>

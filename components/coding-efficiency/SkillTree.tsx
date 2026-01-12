@@ -134,7 +134,7 @@ const SkillDetail: React.FC<SkillDetailProps> = ({ branch, progress, onClose }) 
       
       {/* Milestones */}
       <div className="space-y-3">
-        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">學習路徑</h3>
+        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">学习路径</h3>
         {branch.milestones.map((milestone, index) => {
           const isCompleted = progress.completedCount >= milestone.requiredCount;
           const isCurrent = currentLevel === milestone.level;
@@ -157,7 +157,7 @@ const SkillDetail: React.FC<SkillDetailProps> = ({ branch, progress, onClose }) 
                   <span className={`font-medium ${isCompleted ? 'text-white' : 'text-gray-400'}`}>
                     {milestone.title}
                   </span>
-                  <span className="text-[10px] text-gray-600">({milestone.requiredCount} 個技巧)</span>
+                  <span className="text-[10px] text-gray-600">({milestone.requiredCount} 个技巧)</span>
                 </div>
                 <p className="text-xs text-gray-500">{milestone.description}</p>
               </div>
@@ -272,7 +272,7 @@ const SkillTree: React.FC = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <i className="fa-solid fa-sitemap text-emerald-500 text-lg"></i>
-          <h2 className="text-xl font-bold text-white">技能樹</h2>
+          <h2 className="text-xl font-bold text-white">技能树</h2>
         </div>
         <div className="flex items-center gap-4 text-xs text-gray-500">
           <span><i className="fa-solid fa-unlock text-emerald-400 mr-1"></i>{totalStats.unlockedBranches}/{totalStats.branches} 分支</span>
@@ -306,8 +306,8 @@ const SkillTree: React.FC = () => {
       {totalStats.totalCompleted === 0 && (
         <div className="text-center py-6 bg-white/5 rounded-xl border border-white/10">
           <i className="fa-solid fa-seedling text-gray-600 text-3xl mb-3"></i>
-          <p className="text-gray-500 text-sm">完成今日精選技巧，開始解鎖技能樹！</p>
-          <p className="text-gray-600 text-xs mt-1">每個技巧都會累積到對應的技能分支</p>
+          <p className="text-gray-500 text-sm">完成今日精选技巧，开始解锁技能树！</p>
+          <p className="text-gray-600 text-xs mt-1">每个技巧都会累积到对应的技能分支</p>
         </div>
       )}
     </div>

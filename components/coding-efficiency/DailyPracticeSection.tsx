@@ -90,7 +90,7 @@ const DailyPracticeSection: React.FC = () => {
     setError(null);
     setIsFromCache(false);
 
-    // 離線時嘗試讀取緩存
+    // 离线时尝试读取缓存
     if (isOffline && !skipCache) {
       const cached = getTodayCachedPractice();
       if (cached) {
@@ -100,7 +100,7 @@ const DailyPracticeSection: React.FC = () => {
         setIsLoading(false);
         return;
       }
-      setError('離線狀態，無緩存內容');
+      setError('离线状态，无缓存内容');
       setIsLoading(false);
       return;
     }
@@ -109,7 +109,7 @@ const DailyPracticeSection: React.FC = () => {
       const result = await getTodayPractice();
 
       if (result.error) {
-        // 網絡錯誤時嘗試讀取緩存
+        // 网络错误时尝试读取缓存
         const cached = getTodayCachedPractice();
         if (cached) {
           setMainPractice(cached.main_practice);
@@ -124,20 +124,20 @@ const DailyPracticeSection: React.FC = () => {
       if (result.data) {
         setMainPractice(result.data.main_practice);
         setAltPractices(result.data.alt_practices || []);
-        // 緩存數據
+        // 缓存数据
         cacheDailyPractice(result.data);
       } else {
-        setError('今日內容尚未生成，請稍後再來');
+        setError('今日内容尚未生成，请稍后再来');
       }
     } catch (e) {
-      // 錯誤時嘗試讀取緩存
+      // 错误时尝试读取缓存
       const cached = getTodayCachedPractice();
       if (cached) {
         setMainPractice(cached.main_practice);
         setAltPractices(cached.alt_practices || []);
         setIsFromCache(true);
       } else {
-        setError('載入失敗，請重試');
+        setError('加载失败，请重试');
       }
     } finally {
       setIsLoading(false);
@@ -178,7 +178,7 @@ const DailyPracticeSection: React.FC = () => {
       <div className="space-y-6">
         <div className="flex items-center gap-3 mb-6">
           <i className="fa-solid fa-laptop-code text-blue-500"></i>
-          <h2 className="text-2xl font-bold text-white">今日精選</h2>
+          <h2 className="text-2xl font-bold text-white">今日精选</h2>
         </div>
         <SkeletonCard isMain />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -196,7 +196,7 @@ const DailyPracticeSection: React.FC = () => {
         <NetworkBanner isOffline={isOffline} wasOffline={wasOffline} />
         <div className="rounded-2xl bg-red-900/20 border border-red-500/30 p-8 text-center">
           <div className="text-4xl mb-4">😕</div>
-          <h3 className="text-lg font-bold text-white mb-2">載入失敗</h3>
+          <h3 className="text-lg font-bold text-white mb-2">加载失败</h3>
           <p className="text-gray-400 mb-6 max-w-md mx-auto">{error}</p>
           <button
             onClick={handleRetry}
@@ -206,12 +206,12 @@ const DailyPracticeSection: React.FC = () => {
             {isRetrying ? (
               <>
                 <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-                重試中...
+                重试中...
               </>
             ) : (
               <>
                 <i className="fa-solid fa-arrows-rotate mr-2"></i>
-                重試
+                重试
               </>
             )}
           </button>
@@ -225,7 +225,7 @@ const DailyPracticeSection: React.FC = () => {
     return (
       <div className="rounded-2xl bg-white/5 border border-white/10 p-8 text-center">
         <i className="fa-solid fa-inbox text-gray-600 text-3xl mb-3"></i>
-        <p className="text-gray-500">今日內容尚未生成</p>
+        <p className="text-gray-500">今日内容尚未生成</p>
       </div>
     );
   }
@@ -239,15 +239,15 @@ const DailyPracticeSection: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-3">
           <i className="fa-solid fa-laptop-code text-emerald-500 text-lg"></i>
-          <h2 className="text-xl sm:text-2xl font-bold text-white">今日精選</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-white">今日精选</h2>
           {isFromCache && (
             <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-[10px] rounded-lg">
-              緩存
+              缓存
             </span>
           )}
         </div>
         <span className="text-xs text-gray-500 font-mono">
-          {new Date().toLocaleDateString('zh-TW', { month: 'long', day: 'numeric' })}
+          {new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' })}
         </span>
       </div>
 
@@ -259,13 +259,13 @@ const DailyPracticeSection: React.FC = () => {
         onDifficultyChange={setSelectedDifficulty}
       />
 
-      {/* 篩選結果顯示 */}
+      {/* 筛选结果显示 */}
       {hasFilters ? (
         <>
-          {/* 篩選結果數量 */}
+          {/* 筛选结果数量 */}
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-500">
-              找到 <span className="text-emerald-400 font-medium">{filteredPractices.length}</span> 個相關技巧
+              找到 <span className="text-emerald-400 font-medium">{filteredPractices.length}</span> 个相关技巧
             </span>
             <button
               onClick={() => {
@@ -275,7 +275,7 @@ const DailyPracticeSection: React.FC = () => {
               className="text-xs text-gray-500 hover:text-emerald-400 transition-colors"
             >
               <i className="fa-solid fa-xmark mr-1"></i>
-              清除篩選
+              清除筛选
             </button>
           </div>
 
@@ -295,8 +295,8 @@ const DailyPracticeSection: React.FC = () => {
           ) : (
             <div className="rounded-2xl bg-white/5 border border-white/10 p-8 text-center">
               <i className="fa-solid fa-filter-circle-xmark text-gray-600 text-3xl mb-3"></i>
-              <p className="text-gray-500">暫無符合條件的技巧</p>
-              <p className="text-gray-600 text-xs mt-2">嘗試調整篩選條件</p>
+              <p className="text-gray-500">暂无符合条件的技巧</p>
+              <p className="text-gray-600 text-xs mt-2">尝试调整筛选条件</p>
             </div>
           )}
         </>
@@ -322,7 +322,7 @@ const DailyPracticeSection: React.FC = () => {
                 className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
               >
                 <i className={`fa-solid fa-clock-rotate-left mr-1.5`}></i>
-                {showHistory ? '隱藏歷史' : '查看歷史'}
+                {showHistory ? '隐藏历史' : '查看历史'}
               </button>
             </div>
           </div>
@@ -332,7 +332,7 @@ const DailyPracticeSection: React.FC = () => {
             <>
               <div className="flex items-center gap-3 pt-4">
                 <div className="h-px flex-1 bg-white/10"></div>
-                <span className="text-xs text-gray-500 uppercase tracking-widest font-medium">更多推薦</span>
+                <span className="text-xs text-gray-500 uppercase tracking-widest font-medium">更多推荐</span>
                 <div className="h-px flex-1 bg-white/10"></div>
               </div>
 

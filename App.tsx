@@ -197,7 +197,7 @@ const App: React.FC = () => {
               </h1>
               <div className="flex items-center gap-3 mt-0.5">
                 <span className="text-[9px] text-gray-500 font-mono uppercase tracking-widest">
-                  {language === 'zh' ? 'AI 輔助編程效率提升' : 'AI-Powered Coding Efficiency'}
+                  {language === 'zh' ? 'AI 辅助编程效率提升' : 'AI-Powered Coding Efficiency'}
                 </span>
                 <div className="relative" ref={coreMenuRef}>
                   <button
@@ -238,7 +238,7 @@ const App: React.FC = () => {
           <form onSubmit={handleSearchSubmit} className="relative w-full md:w-[400px] group">
             <input
               type="text"
-              placeholder={language === 'zh' ? '搜索編程技巧、AI工具、提效方法...' : 'Search coding tips, AI tools, efficiency methods...'}
+              placeholder={language === 'zh' ? '搜索编程技巧、AI工具、提效方法...' : 'Search coding tips, AI tools, efficiency methods...'}
               className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-12 text-sm focus:outline-none focus:border-emerald-500/50 focus:ring-4 focus:ring-emerald-500/5 transition-all placeholder:text-gray-600 text-white font-medium"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -306,7 +306,7 @@ const App: React.FC = () => {
           {/* Stats */}
           <section className="glass-card rounded-2xl p-5 border-emerald-500/10">
             <h2 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.25em] mb-5">
-              {language === 'zh' ? '學習進度' : 'Learning Progress'}
+              {language === 'zh' ? '学习进度' : 'Learning Progress'}
             </h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
@@ -330,7 +330,7 @@ const App: React.FC = () => {
               }`}
             >
               <i className="fa-solid fa-calendar-day"></i>
-              {language === 'zh' ? '今日精選' : "Today's Pick"}
+              {language === 'zh' ? '今日精选' : "Today's Pick"}
             </button>
             <button
               onClick={() => setSidebarView('history')}
@@ -341,7 +341,7 @@ const App: React.FC = () => {
               }`}
             >
               <i className="fa-solid fa-clock-rotate-left"></i>
-              {language === 'zh' ? '歷史精選' : 'History'}
+              {language === 'zh' ? '历史精选' : 'History'}
             </button>
             <button
               onClick={() => setSidebarView('dashboard')}
@@ -352,7 +352,7 @@ const App: React.FC = () => {
               }`}
             >
               <i className="fa-solid fa-chart-pie"></i>
-              {language === 'zh' ? '我的進度' : 'My Progress'}
+              {language === 'zh' ? '我的进度' : 'My Progress'}
             </button>
             <button
               onClick={() => setSidebarView('skills')}
@@ -363,7 +363,7 @@ const App: React.FC = () => {
               }`}
             >
               <i className="fa-solid fa-sitemap"></i>
-              {language === 'zh' ? '技能樹' : 'Skill Tree'}
+              {language === 'zh' ? '技能树' : 'Skill Tree'}
             </button>
           </nav>
         </aside>
@@ -400,7 +400,7 @@ const App: React.FC = () => {
                   <div className="space-y-6 py-8">
                     <div className="flex items-center gap-4 text-emerald-400 font-mono text-[11px] uppercase tracking-[0.3em] animate-pulse">
                       <i className="fa-solid fa-spinner fa-spin text-sm"></i>
-                      {language === 'zh' ? '載入詳情...' : 'Loading details...'}
+                      {language === 'zh' ? '加载详情...' : 'Loading details...'}
                     </div>
                     <div className="space-y-4 opacity-40">
                       <div className="h-4 bg-white/10 rounded w-full animate-pulse"></div>
@@ -450,7 +450,7 @@ const App: React.FC = () => {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-black text-white">
-                  {language === 'zh' ? '搜索結果' : 'Search Results'}
+                  {language === 'zh' ? '搜索结果' : 'Search Results'}
                 </h2>
                 <button
                   onClick={clearSearch}
@@ -484,7 +484,7 @@ const App: React.FC = () => {
                 <div className="flex flex-col items-center justify-center py-20 text-gray-600 space-y-4 glass-card rounded-2xl border-dashed border-2 border-white/5">
                   <i className="fa-solid fa-search text-3xl opacity-20"></i>
                   <p className="text-lg font-bold text-white/60">
-                    {language === 'zh' ? '未找到相關結果' : 'No results found'}
+                    {language === 'zh' ? '未找到相关结果' : 'No results found'}
                   </p>
                 </div>
               )}

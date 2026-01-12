@@ -1,5 +1,5 @@
 /**
- * ScenarioFilter - 場景和難度篩選器組件
+ * ScenarioFilter - 场景和难度筛选器组件
  */
 
 import React from 'react';
@@ -21,22 +21,22 @@ export interface ScenarioFilterProps {
 // ============================================================
 
 const SCENARIOS: Array<{ value: ScenarioTag | 'all'; label: string; icon: string }> = [
-  { value: 'all', label: '全部場景', icon: 'fa-layer-group' },
-  { value: 'debugging', label: '調試', icon: 'fa-bug' },
-  { value: 'refactoring', label: '重構', icon: 'fa-code-branch' },
-  { value: 'code-review', label: '代碼審查', icon: 'fa-magnifying-glass-chart' },
-  { value: 'testing', label: '測試', icon: 'fa-vial' },
-  { value: 'documentation', label: '文檔', icon: 'fa-file-lines' },
-  { value: 'learning', label: '學習', icon: 'fa-graduation-cap' },
-  { value: 'productivity', label: '生產力', icon: 'fa-rocket' },
+  { value: 'all', label: '全部场景', icon: 'fa-layer-group' },
+  { value: 'debugging', label: '调试', icon: 'fa-bug' },
+  { value: 'refactoring', label: '重构', icon: 'fa-code-branch' },
+  { value: 'code-review', label: '代码审查', icon: 'fa-magnifying-glass-chart' },
+  { value: 'testing', label: '测试', icon: 'fa-vial' },
+  { value: 'documentation', label: '文档', icon: 'fa-file-lines' },
+  { value: 'learning', label: '学习', icon: 'fa-graduation-cap' },
+  { value: 'productivity', label: '生产力', icon: 'fa-rocket' },
   { value: 'prompt-engineering', label: '提示工程', icon: 'fa-wand-magic-sparkles' },
 ];
 
 const DIFFICULTIES: Array<{ value: 'beginner' | 'intermediate' | 'advanced' | 'all'; label: string; color: string }> = [
-  { value: 'all', label: '全部難度', color: 'bg-gray-600' },
-  { value: 'beginner', label: '入門', color: 'bg-green-600' },
-  { value: 'intermediate', label: '中級', color: 'bg-yellow-600' },
-  { value: 'advanced', label: '高級', color: 'bg-red-600' },
+  { value: 'all', label: '全部难度', color: 'bg-gray-600' },
+  { value: 'beginner', label: '入门', color: 'bg-green-600' },
+  { value: 'intermediate', label: '中级', color: 'bg-yellow-600' },
+  { value: 'advanced', label: '高级', color: 'bg-red-600' },
 ];
 
 // ============================================================
@@ -51,7 +51,7 @@ export const ScenarioFilter: React.FC<ScenarioFilterProps> = ({
 }) => {
   return (
     <div className="space-y-3 mb-6">
-      {/* 場景選擇器 */}
+      {/* 场景选择器 */}
       <div className="flex flex-wrap gap-2">
         {SCENARIOS.map((scenario) => (
           <button
@@ -72,7 +72,7 @@ export const ScenarioFilter: React.FC<ScenarioFilterProps> = ({
         ))}
       </div>
 
-      {/* 難度選擇器 */}
+      {/* 难度选择器 */}
       <div className="flex flex-wrap gap-2">
         {DIFFICULTIES.map((difficulty) => (
           <button
