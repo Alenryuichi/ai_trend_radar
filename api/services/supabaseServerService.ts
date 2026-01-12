@@ -22,22 +22,29 @@ export interface DailyPracticeRecord {
 
 // ============================================================
 // Supabase Client 初始化 (Serverless 環境使用 process.env)
+// 延遲初始化以確保環境變數已載入
 // ============================================================
 
-const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+let supabaseServerInstance: SupabaseClient | null = null;
 
-// 使用 service_role key 繞過 RLS
-export const supabaseServer: SupabaseClient = createClient(
-  supabaseUrl,
-  supabaseServiceKey,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
+function getSupabaseServer(): SupabaseClient {
+  if (!supabaseServerInstance) {
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error(`Supabase config missing: URL=${!!supabaseUrl}, Key=${!!supabaseServiceKey}`);
     }
+
+    supabaseServerInstance = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
   }
-);
+  return supabaseServerInstance;
+}
 
 // ============================================================
 // 數據操作方法
@@ -47,7 +54,8 @@ export const supabaseServer: SupabaseClient = createClient(
  * 獲取指定日期的今日精選
  */
 export async function getDailyPractice(date: string): Promise<DailyPracticeRecord | null> {
-  const { data, error } = await supabaseServer
+  const supabase = getSupabaseServer();
+  const { data, error } = await supabase
     .from('daily_practices')
     .select('*')
     .eq('date', date)
@@ -73,7 +81,8 @@ export async function saveDailyPractice(
   altPractices: DailyPractice[],
   aiModel: string
 ): Promise<DailyPracticeRecord | null> {
-  const { data, error } = await supabaseServer
+  const supabase = getSupabaseServer();
+  const { data, error } = await supabase
     .from('daily_practices')
     .insert({
       date,
