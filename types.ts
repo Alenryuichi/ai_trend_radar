@@ -1,6 +1,64 @@
 
 export type Language = 'en' | 'zh';
 
+// ============================================================
+// Daily Practice Types (今日精選)
+// ============================================================
+
+/**
+ * 今日精選內容 - 前端使用的業務模型
+ */
+export interface DailyPractice {
+  id: string;
+  title: string;
+  summary: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  estimatedMinutes: number;
+  steps: string[];
+  whyItMatters: string;
+  sourceUrl: string;
+  sourceName: string;
+  tools: string[];
+  tags: string[];
+}
+
+/**
+ * 數據庫記錄 - Supabase daily_practices 表結構
+ */
+export interface DailyPracticeRecord {
+  id: string;
+  date: string; // YYYY-MM-DD
+  main_practice: DailyPractice;
+  alt_practices: DailyPractice[];
+  ai_model: string | null;
+  generation_status: 'success' | 'failed' | 'pending' | null;
+  created_at: string;
+}
+
+/**
+ * 用戶練習狀態
+ */
+export type PracticeStatus = 'not_started' | 'in_progress' | 'completed' | 'skipped';
+
+/**
+ * 用戶練習狀態記錄（LocalStorage 存儲格式）
+ */
+export interface PracticeStatusRecord {
+  date: string;
+  practiceId: string;
+  status: PracticeStatus;
+  updatedAt: string;
+}
+
+/**
+ * 通用 API 響應格式
+ */
+export interface ApiResult<T> {
+  data: T | null;
+  error: string | null;
+  fromCache: boolean;
+}
+
 export interface GroundingSource {
   title: string;
   uri: string;
