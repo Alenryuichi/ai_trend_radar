@@ -1,11 +1,13 @@
 /**
  * Vercel Cron API Route - 每日精選內容生成
- * 
+ *
  * 執行時間: 每日 UTC 00:00 (北京時間 08:00)
  * 路徑: /api/cron/daily-practice
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { generateDailyContent } from '../services/aiGenerationService';
+import { getDailyPractice, saveDailyPractice } from '../services/supabaseServerService';
 
 // ============================================================
 // Handler
@@ -25,7 +27,7 @@ export default async function handler(
   // ============================================================
   const CRON_SECRET = process.env.CRON_SECRET;
   const authHeader = request.headers.authorization;
-  
+
   // Vercel Cron 會自動帶上 Authorization: Bearer <CRON_SECRET>
   if (!CRON_SECRET || authHeader !== `Bearer ${CRON_SECRET}`) {
     console.error('[Cron] Unauthorized request');
@@ -35,11 +37,6 @@ export default async function handler(
   console.log('[Cron] Starting daily practice generation...');
 
   try {
-    // ============================================================
-    // 動態導入服務（避免冷啟動問題）
-    // ============================================================
-    const { generateDailyContent } = await import('../services/aiGenerationService');
-    const { getDailyPractice, saveDailyPractice } = await import('../services/supabaseServerService');
 
     // ============================================================
     // 檢查今日是否已生成
