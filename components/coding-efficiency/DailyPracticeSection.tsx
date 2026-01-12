@@ -4,13 +4,16 @@
  * 包含主推薦卡片和備選卡片網格
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { DailyPractice, DailyPracticeRecord } from '../../types';
 import { getTodayPractice } from '../../services/supabaseService';
 import { getCompletedPracticeIds, savePracticeStatus } from '../../services/practiceStorageService';
+import { cacheDailyPractice, getTodayCachedPractice } from '../../services/practicesCacheService';
+import useNetworkStatus from '../../hooks/useNetworkStatus';
 import DailyPracticeCard from './DailyPracticeCard';
 import PracticeProgress from './PracticeProgress';
 import PracticeHistory from './PracticeHistory';
+import NetworkBanner from './NetworkBanner';
 
 // ============================================================
 // Skeleton Loading Component
@@ -45,39 +48,91 @@ const DailyPracticeSection: React.FC = () => {
   const [mainPractice, setMainPractice] = useState<DailyPractice | null>(null);
   const [altPractices, setAltPractices] = useState<DailyPractice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRetrying, setIsRetrying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [showHistory, setShowHistory] = useState(false);
+  const [isFromCache, setIsFromCache] = useState(false);
 
-  useEffect(() => {
-    loadTodayPractice();
-    setCompletedIds(getCompletedPracticeIds());
-  }, []);
+  const { isOnline, isOffline, wasOffline } = useNetworkStatus();
 
-  const loadTodayPractice = async () => {
+  const loadTodayPractice = useCallback(async (skipCache = false) => {
     setIsLoading(true);
     setError(null);
+    setIsFromCache(false);
+
+    // 離線時嘗試讀取緩存
+    if (isOffline && !skipCache) {
+      const cached = getTodayCachedPractice();
+      if (cached) {
+        setMainPractice(cached.main_practice);
+        setAltPractices(cached.alt_practices || []);
+        setIsFromCache(true);
+        setIsLoading(false);
+        return;
+      }
+      setError('離線狀態，無緩存內容');
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const result = await getTodayPractice();
 
       if (result.error) {
-        setError(result.error);
+        // 網絡錯誤時嘗試讀取緩存
+        const cached = getTodayCachedPractice();
+        if (cached) {
+          setMainPractice(cached.main_practice);
+          setAltPractices(cached.alt_practices || []);
+          setIsFromCache(true);
+        } else {
+          setError(result.error);
+        }
         return;
       }
 
       if (result.data) {
         setMainPractice(result.data.main_practice);
         setAltPractices(result.data.alt_practices || []);
+        // 緩存數據
+        cacheDailyPractice(result.data);
       } else {
         setError('今日內容尚未生成，請稍後再來');
       }
     } catch (e) {
-      setError('載入失敗，請重試');
+      // 錯誤時嘗試讀取緩存
+      const cached = getTodayCachedPractice();
+      if (cached) {
+        setMainPractice(cached.main_practice);
+        setAltPractices(cached.alt_practices || []);
+        setIsFromCache(true);
+      } else {
+        setError('載入失敗，請重試');
+      }
     } finally {
       setIsLoading(false);
     }
+  }, [isOffline]);
+
+  useEffect(() => {
+    loadTodayPractice();
+    setCompletedIds(getCompletedPracticeIds());
+  }, []);
+
+  // 網絡恢復時自動刷新
+  useEffect(() => {
+    if (wasOffline && isOnline && isFromCache) {
+      loadTodayPractice(true);
+    }
+  }, [wasOffline, isOnline, isFromCache, loadTodayPractice]);
+
+  const handleRetry = async () => {
+    if (isRetrying) return;
+    setIsRetrying(true);
+    await loadTodayPractice();
+    setIsRetrying(false);
   };
 
   const handleToggleExpand = (id: string) => {
@@ -109,16 +164,30 @@ const DailyPracticeSection: React.FC = () => {
   // Error State
   if (error) {
     return (
-      <div className="rounded-2xl bg-red-900/20 border border-red-500/30 p-6 text-center">
-        <i className="fa-solid fa-triangle-exclamation text-red-500 text-2xl mb-3"></i>
-        <p className="text-red-400 mb-4">{error}</p>
-        <button
-          onClick={loadTodayPractice}
-          className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-sm font-medium transition-colors"
-        >
-          <i className="fa-solid fa-arrows-rotate mr-2"></i>
-          重試
-        </button>
+      <div className="space-y-4">
+        <NetworkBanner isOffline={isOffline} wasOffline={wasOffline} />
+        <div className="rounded-2xl bg-red-900/20 border border-red-500/30 p-8 text-center">
+          <div className="text-4xl mb-4">😕</div>
+          <h3 className="text-lg font-bold text-white mb-2">載入失敗</h3>
+          <p className="text-gray-400 mb-6 max-w-md mx-auto">{error}</p>
+          <button
+            onClick={handleRetry}
+            disabled={isRetrying}
+            className="inline-flex items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-medium transition-colors"
+          >
+            {isRetrying ? (
+              <>
+                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                重試中...
+              </>
+            ) : (
+              <>
+                <i className="fa-solid fa-arrows-rotate mr-2"></i>
+                重試
+              </>
+            )}
+          </button>
+        </div>
       </div>
     );
   }
@@ -135,11 +204,19 @@ const DailyPracticeSection: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* 網絡狀態提示 */}
+      <NetworkBanner isOffline={isOffline} wasOffline={wasOffline} isFromCache={isFromCache} />
+
       {/* Section Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-3">
           <i className="fa-solid fa-laptop-code text-blue-500 text-lg"></i>
-          <h2 className="text-2xl font-bold text-white">今日精選</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-white">今日精選</h2>
+          {isFromCache && (
+            <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-[10px] rounded-lg">
+              緩存
+            </span>
+          )}
         </div>
         <span className="text-xs text-gray-500 font-mono">
           {new Date().toLocaleDateString('zh-TW', { month: 'long', day: 'numeric' })}
