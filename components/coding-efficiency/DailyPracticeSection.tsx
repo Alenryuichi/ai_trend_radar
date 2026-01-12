@@ -7,7 +7,10 @@
 import React, { useState, useEffect } from 'react';
 import { DailyPractice, DailyPracticeRecord } from '../../types';
 import { getTodayPractice } from '../../services/supabaseService';
+import { getCompletedPracticeIds, savePracticeStatus } from '../../services/practiceStorageService';
 import DailyPracticeCard from './DailyPracticeCard';
+import PracticeProgress from './PracticeProgress';
+import PracticeHistory from './PracticeHistory';
 
 // ============================================================
 // Skeleton Loading Component
@@ -44,23 +47,26 @@ const DailyPracticeSection: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
     loadTodayPractice();
+    setCompletedIds(getCompletedPracticeIds());
   }, []);
 
   const loadTodayPractice = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await getTodayPractice();
-      
+
       if (result.error) {
         setError(result.error);
         return;
       }
-      
+
       if (result.data) {
         setMainPractice(result.data.main_practice);
         setAltPractices(result.data.alt_practices || []);
@@ -76,6 +82,11 @@ const DailyPracticeSection: React.FC = () => {
 
   const handleToggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
+  };
+
+  const handleToggleComplete = (practiceId: string, newStatus: boolean) => {
+    savePracticeStatus(practiceId, newStatus);
+    setCompletedIds(getCompletedPracticeIds());
   };
 
   // Loading State
@@ -136,12 +147,29 @@ const DailyPracticeSection: React.FC = () => {
       </div>
 
       {/* Main Practice Card */}
-      <DailyPracticeCard
-        practice={mainPractice}
-        variant="main"
-        expanded={expandedId === mainPractice.id}
-        onToggleExpand={() => handleToggleExpand(mainPractice.id)}
-      />
+      <div className="space-y-4">
+        <DailyPracticeCard
+          practice={mainPractice}
+          variant="main"
+          expanded={expandedId === mainPractice.id}
+          onToggleExpand={() => handleToggleExpand(mainPractice.id)}
+        />
+        {/* 實踐狀態按鈕 */}
+        <div className="flex items-center justify-between">
+          <PracticeProgress
+            practiceId={mainPractice.id}
+            isCompleted={completedIds.has(mainPractice.id)}
+            onToggle={handleToggleComplete}
+          />
+          <button
+            onClick={() => setShowHistory(!showHistory)}
+            className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+          >
+            <i className={`fa-solid fa-clock-rotate-left mr-1.5`}></i>
+            {showHistory ? '隱藏歷史' : '查看歷史'}
+          </button>
+        </div>
+      </div>
 
       {/* Alternative Practices */}
       {altPractices.length > 0 && (
@@ -164,6 +192,21 @@ const DailyPracticeSection: React.FC = () => {
             ))}
           </div>
         </>
+      )}
+
+      {/* 歷史精選區塊 */}
+      {showHistory && (
+        <div className="pt-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-px flex-1 bg-white/10"></div>
+            <span className="text-xs text-gray-500 uppercase tracking-widest font-medium">
+              <i className="fa-solid fa-clock-rotate-left mr-1.5"></i>
+              歷史精選
+            </span>
+            <div className="h-px flex-1 bg-white/10"></div>
+          </div>
+          <PracticeHistory />
+        </div>
       )}
     </div>
   );
