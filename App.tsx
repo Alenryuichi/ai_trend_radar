@@ -8,6 +8,7 @@ import GitHubRepoCard from './components/GitHubRepoCard';
 import DailyPracticeSection from './components/coding-efficiency/DailyPracticeSection';
 import PracticeHistory from './components/coding-efficiency/PracticeHistory';
 import ProgressDashboard from './components/coding-efficiency/ProgressDashboard';
+import SkillTree from './components/coding-efficiency/SkillTree';
 import { getCompletedPracticeIds } from './services/practiceStorageService';
 
 const App: React.FC = () => {
@@ -29,7 +30,7 @@ const App: React.FC = () => {
   const [isDetailLoading, setIsDetailLoading] = useState(false);
 
   // 側邊欄視圖
-  const [sidebarView, setSidebarView] = useState<'stats' | 'history' | 'dashboard'>('stats');
+  const [sidebarView, setSidebarView] = useState<'stats' | 'history' | 'dashboard' | 'skills'>('stats');
 
   // Token Usage State
   const [totalUsage, setTotalUsage] = useState<TokenUsage>({ promptTokens: 0, completionTokens: 0, totalTokens: 0 });
@@ -353,6 +354,17 @@ const App: React.FC = () => {
               <i className="fa-solid fa-chart-pie"></i>
               {language === 'zh' ? '我的進度' : 'My Progress'}
             </button>
+            <button
+              onClick={() => setSidebarView('skills')}
+              className={`w-full text-left px-4 py-3 rounded-xl text-[11px] font-bold transition-all flex items-center gap-3 ${
+                sidebarView === 'skills'
+                ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400'
+                : 'bg-white/5 border border-transparent text-gray-400 hover:bg-white/10'
+              }`}
+            >
+              <i className="fa-solid fa-sitemap"></i>
+              {language === 'zh' ? '技能樹' : 'Skill Tree'}
+            </button>
           </nav>
         </aside>
 
@@ -483,6 +495,7 @@ const App: React.FC = () => {
               {sidebarView === 'stats' && <DailyPracticeSection />}
               {sidebarView === 'history' && <PracticeHistory />}
               {sidebarView === 'dashboard' && <ProgressDashboard />}
+              {sidebarView === 'skills' && <SkillTree />}
             </>
           )}
         </div>
