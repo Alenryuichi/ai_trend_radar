@@ -1,10 +1,10 @@
 /**
- * Vercel Cron API Route - 每日精選內容生成
- * 
- * 執行時間: 每日 UTC 00:00 (北京時間 08:00)
- * 路徑: /api/cron/daily-practice
- * 
- * 注意：所有代碼內聯以避免 Vercel Serverless 模組解析問題
+ * Vercel Cron API Route - 每日精选内容生成
+ *
+ * 执行时间: 每日 UTC 00:00 (北京时间 08:00)
+ * 路径: /api/cron/daily-practice
+ *
+ * 注意：所有代码内联以避免 Vercel Serverless 模块解析问题
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
@@ -15,13 +15,13 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 // ============================================================
 
 type ScenarioTag =
-  | 'debugging'      // 調試
-  | 'refactoring'    // 重構
-  | 'code-review'    // 代碼審查
-  | 'testing'        // 測試
-  | 'documentation'  // 文檔
-  | 'learning'       // 學習
-  | 'productivity'   // 生產力
+  | 'debugging'      // 调试
+  | 'refactoring'    // 重构
+  | 'code-review'    // 代码审查
+  | 'testing'        // 测试
+  | 'documentation'  // 文档
+  | 'learning'       // 学习
+  | 'productivity'   // 生产力
   | 'prompt-engineering'; // 提示工程
 
 interface DailyPractice {
@@ -143,42 +143,44 @@ const API_CONFIG = {
 
 type ModelProvider = keyof typeof API_CONFIG;
 
-const GENERATION_PROMPT = `你是一位 AI 輔助編程專家。請生成今日的「AI 編程最佳實踐」推薦。
+const GENERATION_PROMPT = `你是一位 AI 辅助编程专家。请生成今日的「AI 编程最佳实践」推荐。
 
 要求：
-1. 生成 1 個主推薦和 2 個備選推薦
-2. 每個推薦必須包含：
-   - id: 唯一標識符（格式: practice-YYYYMMDD-序號）
-   - title: 標題（15字以內）
-   - summary: 簡述（50字以內）
-   - difficulty: 難度（beginner/intermediate/advanced）
-   - estimatedMinutes: 預計時間（分鐘數字）
-   - steps: 實踐步驟（3-5步的數組）
-   - whyItMatters: 為何重要（50字以內）
-   - sourceUrl: 參考來源 URL（可以是空字串）
-   - sourceName: 來源名稱（可以是空字串）
-   - tools: 相關工具（數組）
-   - tags: 標籤（數組）
-   - scenarioTags: 場景標籤（數組，從以下選項中選擇 1-3 個最相關的）:
-     * "debugging" - 調試場景
-     * "refactoring" - 重構場景
-     * "code-review" - 代碼審查場景
-     * "testing" - 測試場景
-     * "documentation" - 文檔場景
-     * "learning" - 學習場景
-     * "productivity" - 生產力場景
-     * "prompt-engineering" - 提示工程場景
+1. 生成 1 个主推荐和 2 个备选推荐
+2. 每个推荐必须包含：
+   - id: 唯一标识符（格式: practice-YYYYMMDD-序号）
+   - title: 标题（15字以内）
+   - summary: 简述（50字以内）
+   - difficulty: 难度（beginner/intermediate/advanced）
+   - estimatedMinutes: 预计时间（分钟数字）
+   - steps: 实践步骤（3-5步的数组）
+   - whyItMatters: 为何重要（50字以内）
+   - sourceUrl: 参考来源 URL（可以是空字符串）
+   - sourceName: 来源名称（可以是空字符串）
+   - tools: 相关工具（数组）
+   - tags: 标签（数组）
+   - scenarioTags: 场景标签（数组，从以下选项中选择 1-3 个最相关的）:
+     * "debugging" - 调试场景
+     * "refactoring" - 重构场景
+     * "code-review" - 代码审查场景
+     * "testing" - 测试场景
+     * "documentation" - 文档场景
+     * "learning" - 学习场景
+     * "productivity" - 生产力场景
+     * "prompt-engineering" - 提示工程场景
 
-3. 內容應聚焦於：
-   - AI 輔助編程工具使用技巧
-   - Prompt Engineering 最佳實踐
+3. 内容应聚焦于：
+   - AI 辅助编程工具使用技巧
+   - Prompt Engineering 最佳实践
    - AI Code Review 方法
-   - AI 輔助調試技巧
-   - 生產力提升方法
+   - AI 辅助调试技巧
+   - 生产力提升方法
 
-4. 每日推薦應盡量覆蓋不同場景和難度，讓不同階段的開發者都能受益。
+4. 每日推荐应尽量覆盖不同场景和难度，让不同阶段的开发者都能受益。
 
-請以 JSON 格式輸出（不要包含 markdown 代碼塊標記）：
+5. 请务必使用简体中文输出所有内容。
+
+请以 JSON 格式输出（不要包含 markdown 代码块标记）：
 {
   "mainPractice": {...},
   "altPractices": [{...}, {...}]
@@ -217,7 +219,7 @@ async function callAI(provider: ModelProvider): Promise<{ mainPractice: DailyPra
     throw new Error(`${provider} returned empty content`);
   }
 
-  // 清理可能的 markdown 代碼塊
+  // 清理可能的 markdown 代码块
   const cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
   const parsed = JSON.parse(cleanContent);
   
@@ -244,7 +246,7 @@ async function generateDailyContent(): Promise<GenerationResult> {
     }
   }
 
-  throw new Error(`所有模型都失敗: ${errors.join('; ')}`);
+  throw new Error(`所有模型都失败: ${errors.join('; ')}`);
 }
 
 // ============================================================
