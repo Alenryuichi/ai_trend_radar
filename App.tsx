@@ -7,6 +7,7 @@ import { TrendItem, RadarPoint, AICategory, Language, TRANSLATIONS, GitHubRepo, 
 import TrendCard from './components/TrendCard';
 import RadarChart from './components/RadarChart';
 import GitHubRepoCard from './components/GitHubRepoCard';
+import DailyPracticeSection from './components/coding-efficiency/DailyPracticeSection';
 
 const App: React.FC = () => {
   const [language, setLanguage] = useState<Language>('zh'); 
@@ -618,6 +619,13 @@ const App: React.FC = () => {
                 )}
               </div>
 
+              {/* 今日精選區塊 - 僅在 Coding Efficiency 類別顯示 */}
+              {activeCategory === AICategory.CODING_EFFICIENCY && !showOnlyFavorites && !selectedTrend && (
+                <div className="mb-8">
+                  <DailyPracticeSection />
+                </div>
+              )}
+
               {isLoading ? (
                 <div className="space-y-8 py-4">
                   {[1, 2].map(i => (
@@ -628,7 +636,7 @@ const App: React.FC = () => {
                 <div className="grid grid-cols-1 gap-8 py-4">
                   {displayedTrends.length > 0 ? (
                     displayedTrends.map(trend => (
-                      <TrendCard 
+                      <TrendCard
                         key={trend.id} 
                         item={trend} 
                         language={language} 
