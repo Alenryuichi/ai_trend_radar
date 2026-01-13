@@ -206,7 +206,7 @@ const DailyPracticeCard: React.FC<DailyPracticeCardProps> = ({
           </div>
 
           {/* 评论区 */}
-          <CommentSection practiceId={practice.id} className="mt-4" />
+          <CommentSection practiceId={practice.id} />
         </div>
       )}
     </div>

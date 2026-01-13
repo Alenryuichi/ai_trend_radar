@@ -3,7 +3,7 @@
  * 评论区容器组件
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuthContext, LoginPromptModal } from '../auth';
 import { useComments } from '../../hooks/useComments';
 import { CommentItem } from './CommentItem';
@@ -14,21 +14,11 @@ interface CommentSectionProps {
 }
 
 export function CommentSection({ practiceId, className = '' }: CommentSectionProps) {
-  const { user, isAuthenticated, isLoading: authLoading } = useAuthContext();
+  const { user, isAuthenticated } = useAuthContext();
   const { comments, isLoading, addComment, deleteComment } = useComments(practiceId);
   const [inputValue, setInputValue] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  // 自动调整 textarea 高度
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`;
-    }
-  }, [inputValue]);
 
   // 处理发送评论
   const handleSubmit = async () => {
@@ -71,17 +61,17 @@ export function CommentSection({ practiceId, className = '' }: CommentSectionPro
   const isOverLimit = charCount > 500;
 
   return (
-    <div className={`glass-card rounded-2xl p-4 ${className}`}>
-      {/* 标题 */}
-      <div className="text-sm font-bold text-gray-400 mb-4 flex items-center gap-2">
-        <i className="fa-regular fa-comments" />
+    <div className={className}>
+      {/* 标题 - 与其他区块（为何重要、实践步骤）保持一致 */}
+      <h4 className="text-xs font-bold text-gray-300 uppercase tracking-wider mb-3 flex items-center gap-2">
+        <i className="fa-regular fa-comments text-blue-400" />
         <span>评论</span>
         {comments.length > 0 && (
-          <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full">
+          <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full text-gray-400 normal-case">
             {comments.length}
           </span>
         )}
-      </div>
+      </h4>
 
       {/* 评论列表 */}
       <div className="space-y-1 mb-4">
@@ -108,27 +98,31 @@ export function CommentSection({ practiceId, className = '' }: CommentSectionPro
       </div>
 
       {/* 输入区域 */}
-      <div className="flex gap-2 items-end">
+      <div className="flex gap-2 items-center">
         <div className="flex-1 relative">
-          <textarea
-            ref={textareaRef}
+          <input
+            type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSubmit();
+              }
+            }}
             placeholder={isAuthenticated ? '写下你的评论...' : '登录后可发表评论'}
             disabled={!isAuthenticated || isSubmitting}
-            rows={1}
             className={`
-              w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm
+              w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm
               text-white placeholder-gray-500
               focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30
               disabled:opacity-50 disabled:cursor-not-allowed
-              resize-none transition-colors
+              transition-colors
               ${isOverLimit ? 'border-red-500/50' : ''}
             `}
           />
           {inputValue && (
-            <span className={`absolute bottom-1 right-2 text-xs ${isOverLimit ? 'text-red-400' : 'text-gray-500'}`}>
+            <span className={`absolute top-1/2 -translate-y-1/2 right-3 text-xs ${isOverLimit ? 'text-red-400' : 'text-gray-500'}`}>
               {charCount}/500
             </span>
           )}
@@ -136,11 +130,12 @@ export function CommentSection({ practiceId, className = '' }: CommentSectionPro
         <button
           onClick={handleSubmit}
           disabled={!inputValue.trim() || isOverLimit || isSubmitting}
-          className={`
-            bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg px-4 py-2
+          className="
+            bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg px-3 py-2
             transition-colors disabled:opacity-50 disabled:cursor-not-allowed
-            flex items-center gap-1 text-sm font-medium
-          `}
+            flex items-center justify-center text-sm
+            h-[34px] w-[34px]
+          "
         >
           {isSubmitting ? (
             <i className="fa-solid fa-spinner fa-spin" />

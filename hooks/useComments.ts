@@ -34,18 +34,45 @@ export function useComments(practiceId: string): UseCommentsReturn {
     }
 
     try {
-      const { data, error } = await supabase
+      // Step 1: 获取评论
+      const { data: commentsData, error: commentsError } = await supabase
         .from('comments')
-        .select('*, user_profiles(*)')
+        .select('*')
         .eq('practice_id', practiceId)
         .order('created_at', { ascending: true });
 
-      if (error) {
-        console.error('获取评论失败:', error.message);
+      if (commentsError) {
+        console.error('获取评论失败:', commentsError.message);
         return;
       }
 
-      setComments((data as Comment[]) || []);
+      if (!commentsData || commentsData.length === 0) {
+        setComments([]);
+        return;
+      }
+
+      // Step 2: 获取用户信息
+      const userIds = [...new Set(commentsData.map(c => c.user_id))];
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .in('id', userIds);
+
+      if (profilesError) {
+        console.error('获取用户信息失败:', profilesError.message);
+      }
+
+      // Step 3: 合并数据
+      const profilesMap = new Map(
+        (profilesData || []).map(p => [p.id, p])
+      );
+
+      const commentsWithProfiles = commentsData.map(comment => ({
+        ...comment,
+        user_profiles: profilesMap.get(comment.user_id) || null,
+      }));
+
+      setComments(commentsWithProfiles as Comment[]);
     } catch (error) {
       console.error('获取评论异常:', error);
     } finally {
@@ -74,23 +101,36 @@ export function useComments(practiceId: string): UseCommentsReturn {
         throw new Error('评论内容不能超过500字');
       }
 
-      const { data, error } = await supabase
+      // Step 1: 插入评论
+      const { data: commentData, error: commentError } = await supabase
         .from('comments')
         .insert({
           user_id: user.id,
           practice_id: practiceId,
           content: content.trim(),
         })
-        .select('*, user_profiles(*)')
+        .select('*')
         .single();
 
-      if (error) {
-        console.error('发表评论失败:', error.message);
+      if (commentError) {
+        console.error('发表评论失败:', commentError.message);
         throw new Error('发表评论失败');
       }
 
-      // 添加到列表末尾
-      setComments((prev) => [...prev, data as Comment]);
+      // Step 2: 获取用户信息
+      const { data: profileData } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      // Step 3: 合并数据并添加到列表
+      const commentWithProfile = {
+        ...commentData,
+        user_profiles: profileData || null,
+      };
+
+      setComments((prev) => [...prev, commentWithProfile as Comment]);
     },
     [user?.id, practiceId]
   );
