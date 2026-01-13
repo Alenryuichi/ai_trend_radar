@@ -128,6 +128,36 @@ export interface DailyPracticeRecord {
  */
 export type PracticeStatus = 'not_started' | 'in_progress' | 'completed' | 'skipped';
 
+// ============================================================
+// Raw Trends Types (RSS 採集數據)
+// ============================================================
+
+/**
+ * RSS 採集的原始趨勢數據 - 業務模型
+ */
+export interface RawTrend {
+  source: string;
+  title: string;
+  link: string;
+  content?: string;
+  publishedAt?: string;
+  inferredTags?: ScenarioTag[];
+}
+
+/**
+ * 數據庫記錄 - Supabase raw_trends 表結構
+ */
+export interface RawTrendRecord {
+  id: string;
+  source: string;
+  title: string;
+  link: string;
+  content: string | null;
+  published_at: string | null;
+  fetched_at: string;
+  inferred_tags: string[] | null;
+}
+
 /**
  * 用戶練習狀態記錄（LocalStorage 存儲格式）
  */
