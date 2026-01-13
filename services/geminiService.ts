@@ -2,8 +2,18 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AICategory, TrendItem, GroundingSource, Language, GitHubRepo, INTELLIGENCE_CORES, TokenUsage, RadarPoint } from "../types";
 
-// Always use the standard initialization pattern for GoogleGenAI
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Lazy initialization to avoid errors when API_KEY is not set
+let _ai: GoogleGenAI | null = null;
+function getAI(): GoogleGenAI {
+  if (!_ai) {
+    const apiKey = import.meta.env.VITE_GOOGLE_API_KEY || process.env.API_KEY || '';
+    if (!apiKey) {
+      throw new Error('Google API Key not configured. Set VITE_GOOGLE_API_KEY environment variable.');
+    }
+    _ai = new GoogleGenAI({ apiKey });
+  }
+  return _ai;
+}
 
 // API 密钥配置
 const KEYS = {
@@ -105,7 +115,7 @@ export const fetchAITrends = async (query: string, lang: Language, modelId: stri
     let groundingChunks: any[] = [];
 
     if (core.provider === 'gemini') {
-      const response = await ai.models.generateContent({
+      const response = await getAI().models.generateContent({
         model: modelId,
         contents: prompt,
         config: { tools: [{ googleSearch: {} }] },
@@ -179,7 +189,7 @@ export const fetchTrendingRepos = async (lang: Language, modelId: string = 'deep
     let usage: TokenUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
 
     if (core.provider === 'gemini') {
-      const response = await ai.models.generateContent({
+      const response = await getAI().models.generateContent({
         model: modelId,
         contents: prompt,
         config: {
@@ -233,7 +243,7 @@ export const fetchDetailedAnalysis = async (item: TrendItem, lang: Language, mod
 
   try {
     if (core.provider === 'gemini') {
-      const response = await ai.models.generateContent({
+      const response = await getAI().models.generateContent({
         model: modelId,
         contents: prompt,
         config: { tools: [{ googleSearch: {} }] },
@@ -276,7 +286,7 @@ export const getRadarData = async (lang: Language, modelId: string = 'deepseek-c
     let usage: TokenUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
 
     if (core.provider === 'gemini') {
-      const response = await ai.models.generateContent({
+      const response = await getAI().models.generateContent({
         model: modelId,
         contents: prompt,
         config: {
