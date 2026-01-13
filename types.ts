@@ -1,8 +1,81 @@
+import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 export type Language = 'en' | 'zh';
 
 // ============================================================
-// Daily Practice Types (今日精選)
+// Auth Types (用户认证)
+// ============================================================
+
+/**
+ * 用户配置信息（来自 user_profiles 表）
+ */
+export interface UserProfile {
+  id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  provider: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * 认证状态
+ */
+export interface AuthState {
+  user: SupabaseUser | null;
+  profile: UserProfile | null;
+  session: Session | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+}
+
+/**
+ * 认证上下文类型
+ */
+export interface AuthContextType extends AuthState {
+  signInWithGitHub: () => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
+  signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
+}
+
+/**
+ * 评论
+ */
+export interface Comment {
+  id: string;
+  user_id: string;
+  practice_id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  // 关联的用户信息（JOIN 查询）
+  user_profiles?: UserProfile;
+}
+
+/**
+ * 收藏
+ */
+export interface Favorite {
+  id: string;
+  user_id: string;
+  practice_id: string;
+  created_at: string;
+}
+
+/**
+ * 用户实践状态（云端存储）
+ */
+export interface UserPracticeStatus {
+  id: string;
+  user_id: string;
+  practice_id: string;
+  status: 'completed' | 'skipped';
+  completed_at: string;
+}
+
+// ============================================================
+// Daily Practice Types (今日精选)
 // ============================================================
 
 /**

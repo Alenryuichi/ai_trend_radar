@@ -2,10 +2,13 @@
  * DailyPracticeCard - 今日精选卡片组件
  *
  * 支持 main (主推荐) 和 alternative (备选) 两种变体
+ * 包含收藏按钮和 Giscus 评论区（展开时显示）
  */
 
 import React from 'react';
 import { DailyPractice, ScenarioTag } from '../../types';
+import { FavoriteButton } from '../FavoriteButton';
+import { GiscusComments } from '../comments';
 
 // 场景标签配置
 const SCENARIO_CONFIG: Record<ScenarioTag, { label: string; icon: string; color: string }> = {
@@ -195,6 +198,21 @@ const DailyPracticeCard: React.FC<DailyPracticeCardProps> = ({
               </div>
             </div>
           )}
+
+          {/* 操作区：收藏按钮 */}
+          <div className="flex items-center gap-3 pt-2 border-t border-white/5">
+            <FavoriteButton practiceId={practice.id} />
+            <span className="text-gray-500 text-xs">收藏此练习</span>
+          </div>
+
+          {/* Giscus 评论区 */}
+          <div className="pt-4 border-t border-white/10">
+            <h4 className="text-xs font-bold text-gray-300 uppercase tracking-wider mb-3">
+              <i className="fa-solid fa-comments text-blue-500 mr-2"></i>
+              讨论区
+            </h4>
+            <GiscusComments term={practice.id} />
+          </div>
         </div>
       )}
     </div>
