@@ -10,8 +10,13 @@ import PracticeHistory from './components/coding-efficiency/PracticeHistory';
 import ProgressDashboard from './components/coding-efficiency/ProgressDashboard';
 import SkillTree from './components/coding-efficiency/SkillTree';
 import { getCompletedPracticeIds } from './services/practiceStorageService';
+import { AuthProvider, useAuthContext, LoginButton, UserMenu } from './components/auth';
 
-const App: React.FC = () => {
+/**
+ * 主应用内容（需要 AuthProvider 包裹）
+ */
+const AppContent: React.FC = () => {
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuthContext();
   const [language, setLanguage] = useState<Language>('zh');
   const [activeCore, setActiveCore] = useState<IntelligenceCore>(INTELLIGENCE_CORES[0]);
   const [showCoreMenu, setShowCoreMenu] = useState(false);
@@ -262,6 +267,17 @@ const App: React.FC = () => {
               {isSearching ? <i className="fa-solid fa-sync fa-spin"></i> : <i className="fa-solid fa-search"></i>}
             </button>
           </form>
+
+          {/* Auth Section */}
+          <div className="flex items-center">
+            {isAuthLoading ? (
+              <div className="w-8 h-8 rounded-full bg-white/5 animate-pulse"></div>
+            ) : isAuthenticated ? (
+              <UserMenu />
+            ) : (
+              <LoginButton className="px-4 py-2" />
+            )}
+          </div>
         </div>
       </header>
 
@@ -501,6 +517,17 @@ const App: React.FC = () => {
         </div>
       </main>
     </div>
+  );
+};
+
+/**
+ * App 根组件 - 包裹 AuthProvider
+ */
+const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 
